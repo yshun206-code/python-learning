@@ -1,4 +1,14 @@
-bills = []
+import json
+def load_bills():
+    try:
+        with open("bills.json", 'r', encoding="utf-8") as file:
+            bills = json.load(file)
+    except FileNotFoundError:
+        bills = []
+    return bills
+
+bills = load_bills()
+
 def add_bill(data):
     while True:
         name = input("请输入支出的名称")
@@ -15,6 +25,7 @@ def add_bill(data):
                 print("输入的金额形式错误，只能是数字")
         category = input("请输入支出的种类")
         data.append({"name":name,"cost":cost,"category":category})
+        save_bills(data)
 
 def show_bills(data):
     if len(data) == 0:
@@ -23,7 +34,7 @@ def show_bills(data):
     for bill in data:
         print(bill["name"],bill["cost"],bill["category"])
 
-def find_bills(data):
+def find_bill(data):
     while True:
         want_name = input("请输入你要查找的账单支出名称")
         if want_name == "q":
@@ -55,27 +66,50 @@ def max_bills(data):
     print(f"金额{max_bill['cost']}")
     print(f"分类{max_bill['category']}")
 
-while True:
-    print("===== 个人账单管理系统 =====")
-    print("1. 添加账单")
-    print("2. 显示所有账单")
-    print("3. 查询账单")
-    print("4. 查询账单总花费")
-    print("5. 查看花费最高账单")
-    print("0. 退出")
+def save_bills(data):
+    with open("bills.json", 'w', encoding="utf-8") as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
 
-    choice = input("请选择功能：")
-    if choice == "1":
-        add_bill(bills)
-    elif choice == "0":
-        break
-    elif choice == "2":
-        show_bills(bills)
-    elif choice == "3":
-        find_bills(bills)
-    elif choice == "4":
-        total_bills(bills)
-    elif choice == "5":
-        max_bills(bills)
-    else:
-        print("输入错误，请重新选择")
+def delete_bills(data):
+    while True:
+        want_name = input("请输入你要删除的账单支出名称")
+        if want_name == "q":
+            return
+        for bill in data:
+            if bill["name"] == want_name:
+                data.remove(bill)
+                save_bills(data)
+                print("删除成功")
+                return
+        print("没找到该账单，请重新输入")
+def main():
+    while True:
+        print("===== 个人账单管理系统 =====")
+        print("1. 添加账单")
+        print("2. 显示所有账单")
+        print("3. 查询账单")
+        print("4. 查询账单总花费")
+        print("5. 查看花费最高账单")
+        print("6. 删除账单")
+        print("0. 退出")
+
+        choice = input("请选择功能：")
+        if choice == "1":
+            add_bill(bills)
+        elif choice == "0":
+            break
+        elif choice == "2":
+            show_bills(bills)
+        elif choice == "3":
+            find_bill(bills)
+        elif choice == "4":
+            total_bills(bills)
+        elif choice == "5":
+            max_bills(bills)
+        elif choice == "6":
+            delete_bills(bills)
+        else:
+            print("输入错误，请重新选择")
+
+if __name__ == "__main__":
+    main()

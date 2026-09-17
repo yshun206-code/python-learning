@@ -1,3 +1,5 @@
 .venv/
 .idea/
 _pycache_/
+bills.json
+test.txt
